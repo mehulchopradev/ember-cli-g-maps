@@ -36,20 +36,23 @@ export default TextField.extend({
    */
   setup(input) {
     const autocomplete = new google.maps.places.Autocomplete(input, get(this, 'options'));
+    // const onErrorAction = this.get('on-select-error');
+    const onSelectAction = this.get('on-select');
 
     set(this, 'autocomplete', autocomplete);
     set(this, 'listener', autocomplete.addListener('place_changed', () => {
       const placeResult = (autocomplete.getPlace() || {});
 
-      if (!placeResult.geometry) {
+      /* if (!placeResult.geometry) {
         return this.sendAction('on-select-error', { input: placeResult.name });
-      }
+      } */
 
-      this.sendAction('on-select', {
+      onSelectAction(placeResult);
+      /* this.sendAction('on-select', {
         lat: placeResult.geometry.location.lat(),
         lng: placeResult.geometry.location.lng(),
         place: placeResult
-      });
+      }); */
     }));
   },
 
@@ -78,7 +81,9 @@ export default TextField.extend({
 
   actions: {
     onSelect(place) {
-      this.sendAction('on-select', place);
+      const onSelectAction = this.get('on-select');
+      onSelectAction(place);
+      // this.sendAction('on-select', place);
     }
   }
 });
